@@ -1,0 +1,382 @@
+607a608
+> __divdi3
+658d658
+< __gmpf_clears
+660d659
+< __gmpf_cmp_d
+663d661
+< __gmpf_cmp_z
+667d664
+< __gmpf_dump
+669,674d665
+< __gmpf_fits_sint_p
+< __gmpf_fits_slong_p
+< __gmpf_fits_sshort_p
+< __gmpf_fits_uint_p
+< __gmpf_fits_ulong_p
+< __gmpf_fits_ushort_p
+678,680d668
+< __gmpf_get_default_prec
+< __gmpf_get_prec
+< __gmpf_get_si
+683d670
+< __gmpf_init
+685,692d671
+< __gmpf_inits
+< __gmpf_init_set
+< __gmpf_init_set_d
+< __gmpf_init_set_si
+< __gmpf_init_set_str
+< __gmpf_init_set_ui
+< __gmpf_inp_str
+< __gmpf_integer_p
+697,700d675
+< __gmpf_out_str
+< __gmpf_pow_ui
+< __gmpf_random2
+< __gmpf_reldiff
+703,706d677
+< __gmpf_set_default_prec
+< __gmpf_set_prec
+< __gmpf_set_prec_raw
+< __gmpf_set_q
+711d681
+< __gmpf_size
+713d682
+< __gmpf_sqrt_ui
+716,717d684
+< __gmpf_swap
+< __gmpf_trunc
+720,722d686
+< __gmpf_urandomb
+< __gmp_get_memory_functions
+< __gmp_init_primesieve
+726,728d689
+< __gmpn_add_err1_n
+< __gmpn_add_err2_n
+< __gmpn_add_err3_n
+733,735d693
+< __gmpn_add_n_sub_n
+< __gmpn_and_n
+< __gmpn_andn_n
+739d696
+< __gmpn_bdiv_q
+741d697
+< __gmpn_bdiv_q_itch
+746,750d701
+< __gmpn_broot
+< __gmpn_brootinv
+< __gmpn_broot_invm1
+< __gmpn_bsqrt
+< __gmpn_bsqrtinv
+752,754d702
+< __gmpn_cnd_add_n
+< __gmpn_cnd_sub_n
+< __gmpn_cnd_swap
+768d715
+< __gmpn_divexact
+770,773d716
+< __gmpn_divexact_by3
+< __gmpn_divexact_by3c
+< __gmpn_divisible_p
+< __gmpn_divmod_1
+775,779d717
+< __gmpn_div_qr_1
+< __gmpn_div_qr_1n_pi1
+< __gmpn_div_qr_2
+< __gmpn_div_qr_2n_pi1
+< __gmpn_div_qr_2u_pi1
+784,785d721
+< __gmpn_dump
+< __gmp_nextprime
+788,798d723
+< __gmpn_fib2m
+< __gmpn_fib2_ui
+< __gmpn_gcd
+< __gmpn_gcd_1
+< __gmpn_gcd_11
+< __gmpn_gcd_22
+< __gmpn_gcdext
+< __gmpn_gcdext_1
+< __gmpn_gcdext_hook
+< __gmpn_gcdext_lehmer_n
+< __gmpn_gcd_subdiv_step
+801,818d725
+< __gmpn_hamdist
+< __gmpn_hgcd
+< __gmpn_hgcd2
+< __gmpn_hgcd2_jacobi
+< __gmpn_hgcd_appr
+< __gmpn_hgcd_appr_itch
+< __gmpn_hgcd_itch
+< __gmpn_hgcd_jacobi
+< __gmpn_hgcd_matrix_adjust
+< __gmpn_hgcd_matrix_init
+< __gmpn_hgcd_matrix_mul
+< __gmpn_hgcd_matrix_mul_1
+< __gmpn_hgcd_matrix_update_q
+< __gmpn_hgcd_mul_matrix1_vector
+< __gmpn_hgcd_reduce
+< __gmpn_hgcd_reduce_itch
+< __gmpn_hgcd_step
+< __gmpn_invert
+820,824d726
+< __gmpn_ior_n
+< __gmpn_iorn_n
+< __gmpn_jacobi_2
+< __gmpn_jacobi_base
+< __gmpn_jacobi_n
+827,829d728
+< __gmpn_matrix22_mul
+< __gmpn_matrix22_mul1_inverse_vector
+< __gmpn_matrix22_mul_itch
+835,836d733
+< __gmpn_mod_1s_3p
+< __gmpn_mod_1s_3p_cps
+839d735
+< __gmpn_mod_34lsub1
+842,843d737
+< __gmpn_mu_bdiv_q
+< __gmpn_mu_bdiv_q_itch
+858,860d751
+< __gmpn_mulmid
+< __gmpn_mulmid_basecase
+< __gmpn_mulmid_n
+864d754
+< __gmpn_nand_n
+867d756
+< __gmpn_nior_n
+869,870d757
+< __gmpn_perfect_power_p
+< __gmpn_perfect_square_p
+873,875d759
+< __gmpn_pow_1
+< __gmpn_powlo
+< __gmpn_powm
+877d760
+< __gmpn_preinv_mod_1
+880,884d762
+< __gmpn_random
+< __gmpn_random2
+< __gmpn_redc_1
+< __gmpn_redc_2
+< __gmpn_redc_n
+886d763
+< __gmpn_rootrem
+890d766
+< __gmpn_sbpi1_bdiv_r
+894,914d769
+< __gmpn_scan0
+< __gmpn_scan1
+< __gmpn_sec_add_1
+< __gmpn_sec_add_1_itch
+< __gmpn_sec_div_qr
+< __gmpn_sec_div_qr_itch
+< __gmpn_sec_div_r
+< __gmpn_sec_div_r_itch
+< __gmpn_sec_invert
+< __gmpn_sec_invert_itch
+< __gmpn_sec_mul
+< __gmpn_sec_mul_itch
+< __gmpn_sec_pi1_div_qr
+< __gmpn_sec_pi1_div_r
+< __gmpn_sec_powm
+< __gmpn_sec_powm_itch
+< __gmpn_sec_sqr
+< __gmpn_sec_sqr_itch
+< __gmpn_sec_sub_1
+< __gmpn_sec_sub_1_itch
+< __gmpn_sec_tabselect
+916d770
+< __gmpn_sizeinbase
+919,920d772
+< __gmpn_sqrlo
+< __gmpn_sqrlo_basecase
+924d775
+< __gmpn_strongfibo
+927,929d777
+< __gmpn_sub_err1_n
+< __gmpn_sub_err2_n
+< __gmpn_sub_err3_n
+941d788
+< __gmpn_toom42_mulmid
+945d791
+< __gmpn_toom52_mul
+947,948d792
+< __gmpn_toom54_mul
+< __gmpn_toom62_mul
+967,972d810
+< __gmpn_trialdiv
+< __gmpn_udiv_qrnnd
+< __gmpn_umul_ppmm
+< __gmpn_xnor_n
+< __gmpn_xor_n
+< __gmpn_zero
+975d812
+< __gmp_set_memory_functions
+979d815
+< __gmpz_2fac_ui
+982,983d817
+< __gmpz_addmul
+< __gmpz_addmul_ui
+985,990d818
+< __gmpz_and
+< __gmpz_aorsmul_1
+< __gmpz_array_init
+< __gmpz_bin_ui
+< __gmpz_bin_uiui
+< __gmpz_cdiv_q
+992,995d819
+< __gmpz_cdiv_qr
+< __gmpz_cdiv_qr_ui
+< __gmpz_cdiv_q_ui
+< __gmpz_cdiv_r
+997,998d820
+< __gmpz_cdiv_r_ui
+< __gmpz_cdiv_ui
+1000,1001d821
+< __gmpz_clears
+< __gmpz_clrbit
+1004,1007d823
+< __gmpz_cmpabs_d
+< __gmpz_cmpabs_ui
+< __gmpz_cmp_d
+< __gmpz_cmp_si
+1009,1018d824
+< __gmpz_com
+< __gmpz_combit
+< __gmpz_congruent_2exp_p
+< __gmpz_congruent_p
+< __gmpz_congruent_ui_p
+< __gmpz_divexact
+< __gmpz_divexact_gcd
+< __gmpz_divexact_ui
+< __gmpz_divisible_2exp_p
+< __gmpz_divisible_p
+1020d825
+< __gmpz_dump
+1023d827
+< __gmpz_fdiv_q
+1025,1028d828
+< __gmpz_fdiv_qr
+< __gmpz_fdiv_qr_ui
+< __gmpz_fdiv_q_ui
+< __gmpz_fdiv_r
+1030,1033d829
+< __gmpz_fdiv_r_ui
+< __gmpz_fdiv_ui
+< __gmpz_fib2_ui
+< __gmpz_fib_ui
+1036,1037d831
+< __gmpz_fits_sshort_p
+< __gmpz_fits_uint_p
+1039,1045d832
+< __gmpz_fits_ushort_p
+< __gmpz_gcd
+< __gmpz_gcdext
+< __gmpz_gcd_ui
+< __gmpz_get_d
+< __gmpz_get_d_2exp
+< __gmpz_getlimbn
+1049,1050d835
+< __gmpz_hamdist
+< __gmpz_import
+1053d837
+< __gmpz_inits
+1055,1079d838
+< __gmpz_init_set_d
+< __gmpz_init_set_si
+< __gmpz_init_set_str
+< __gmpz_init_set_ui
+< __gmpz_inp_raw
+< __gmpz_inp_str
+< __gmpz_inp_str_nowhite
+< __gmpz_invert
+< __gmpz_ior
+< __gmpz_jacobi
+< __gmpz_kronecker_si
+< __gmpz_kronecker_ui
+< __gmpz_lcm
+< __gmpz_lcm_ui
+< __gmpz_legendre
+< __gmpz_limbs_finish
+< __gmpz_limbs_modify
+< __gmpz_limbs_read
+< __gmpz_limbs_write
+< __gmpz_lucas_mod
+< __gmpz_lucnum2_ui
+< __gmpz_lucnum_ui
+< __gmpz_mfac_uiui
+< __gmpz_millerrabin
+< __gmpz_mod
+1082d840
+< __gmpz_mul_si
+1085d842
+< __gmpz_nextprime
+1088,1095d844
+< __gmpz_out_raw
+< __gmpz_out_str
+< __gmpz_perfect_power_p
+< __gmpz_perfect_square_p
+< __gmpz_popcount
+< __gmpz_powm
+< __gmpz_powm_sec
+< __gmpz_powm_ui
+1097,1098d845
+< __gmpz_primorial_ui
+< __gmpz_probab_prime_p
+1100,1101d846
+< __gmpz_random
+< __gmpz_random2
+1103d847
+< __gmpz_realloc2
+1105,1109d848
+< __gmpz_roinit_n
+< __gmpz_root
+< __gmpz_rootrem
+< __gmpz_rrandomb
+< __gmpz_scan0
+1112,1115d850
+< __gmpz_setbit
+< __gmpz_set_d
+< __gmpz_set_f
+< __gmpz_set_q
+1119d853
+< __gmpz_si_kronecker
+1122,1124d855
+< __gmpz_sqrt
+< __gmpz_sqrtrem
+< __gmpz_stronglucas
+1126,1127d856
+< __gmpz_submul
+< __gmpz_submul_ui
+1131d859
+< __gmpz_tdiv_q_2exp
+1133d860
+< __gmpz_tdiv_qr_ui
+1136,1137d862
+< __gmpz_tdiv_r_2exp
+< __gmpz_tdiv_r_ui
+1139,1140d863
+< __gmpz_tstbit
+< __gmpz_ui_kronecker
+1142,1145d864
+< __gmpz_ui_sub
+< __gmpz_urandomb
+< __gmpz_urandomm
+< __gmpz_xor
+1151a871,872
+> IO_IN
+> IO_OUT
+1163a885
+> KERNEL
+1175a898
+> main
+1191a915
+> __moddi3
+1227a952,953
+> _start
+> start
+1252a979,980
+> __udivdi3
+> __umoddi3

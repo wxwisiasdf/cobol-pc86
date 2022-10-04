@@ -1,0 +1,14 @@
+*.elf
+kernel.c.h
+kernel.c
+kernel.c.l.h
+*.o
+*.a
+.vscode/
+.c4z/
+isodir/
+*.iso
+*.so
+linesort
+gmp/
+libcob/

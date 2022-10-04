@@ -1,0 +1,38 @@
+********************************************************************************
+
+An OS in COBOL!
+
+********************************************************************************
+
+Make sure you first have a i686 cross compiler.
+
+First obtain a copy of gnucobol, now proceed to copy and paste the libcob
+directory over here. Then obtain GMP latest version, your folder structure
+should look someting like this:
+
+lmvxsaos/
+    libcob/
+        ...
+    libc/
+        ...
+    gmp/
+        mini-gmp/
+        mpz/
+        mpf/
+        mpn/
+        ...
+
+Then compile your gnucobol source code you just downloaded, trust me you won't
+want an outdated version!
+
+Afterwards run:
+CC=i686-elf-gcc CFLAGS="-ffreestanding -I../libc -L../libc" ./configure --enable-static --host=i686-elf
+
+sh build-libs.sh
+To build libraries (only run once).
+
+Afterwards run:
+sh build.sh
+To build the kernal (requires libcob and libgmp built before).
+
+********************************************************************************
