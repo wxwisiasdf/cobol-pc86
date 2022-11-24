@@ -57,33 +57,34 @@ int IO_OUT(cob_u16_t port, cob_u32_t data, cob_u8_t *mode)
     return 0;
 }
 
-int IO_IN(cob_u16_t port, cob_u8_t *mode)
+int IO_IN(cob_u16_t port, cob_u8_t *mode, cob_u32_t *d_data)
 {
+    *d_data = 0;
     switch (mode[0])
     {
     case 'C':
     {
-        uint8_t data;
+        uint8_t data = 0;
         asm volatile("inb %1, %0"
                      : "=a"(data)
                      : "Nd"(port));
-        return (int)data;
+        *d_data = data;
     }
     case 'H':
     {
-        uint16_t data;
+        uint16_t data = 0;
         asm volatile("inw %1, %0"
                      : "=a"(data)
                      : "Nd"(port));
-        return (int)data;
+        *d_data = data;
     }
     case 'S':
     {
-        uint32_t data;
+        uint32_t data = 0;
         asm volatile("inl %1, %0"
                      : "=a"(data)
                      : "Nd"(port));
-        return (int)data;
+        *d_data = data;
     }
     default:
         break;

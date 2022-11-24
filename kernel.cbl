@@ -20,8 +20,12 @@
 002000 01  WS-AND1                                         PIC 9(8).
 002100 01  WS-ANDBY                                        PIC 9(8).
 002200 01  WS-ANDRES                                       PIC 9(8).
+       01  WS-OR1                                          PIC 9(8).
+       01  WS-ORBY                                         PIC 9(8).
+       01  WS-ORRES                                        PIC 9(8).
 002300 01  WS-LOOP                                         PIC 9(8).
 002400 01  WS-TMP                                          PIC 9(8).
+       01  WS-TMP2                                         PIC 9(8).
 002500 01  WS-DEBUG                                        PIC A.
 002600 01  WS-PTR                                          USAGE IS
 002700     POINTER.
@@ -37,6 +41,7 @@
 003700 01  WS-INSTR                                        PIC X(8).
 003800 01  WS-OUTSTR                                       PIC X(16).
 003900 01  WS-REPLY                                        PIC X.
+       01  WS-TIMEOUT                                      PIC 9(4).
 004000 01  IO-PORT                                         USAGE IS
 004100     BINARY-SHORT UNSIGNED.
 004200 01  IO-DATA                                         USAGE IS
@@ -82,12 +87,20 @@
 008200******************************************************************
 008300 01  ATAPI-DATA.
 008400******************************************************************
-008500     02 ATAPI-BUS                                    PIC 9(2).
+008500     02 ATAPI-BUS                                    PIC 9(4).
+           02 ATAPI-DRIVE                                  PIC 9(4).
 008600     02 ATAPI-SIZE                                   PIC 9(4).
 008700     02 ATAPI-STATUS                                 PIC 9(8).
+           02 ATAPI-LBA                                    PIC 9(8).
 008800     02 ATAPI-CMD-SIZE                               PIC 9(8).
 008900     02 ATAPI-CMD                                    PIC X(32).
 009000     02 ATAPI-BUF                                    PIC X(2048).
+           02 ATAPI-FIRST-BUS                              PIC 9(4)
+           VALUE H'1F0'.
+           02 ATAPI-SECOND-BUS                             PIC 9(4)
+           VALUE H'170'.
+           02 ATAPI-DRIVE-MASTER                           PIC 9(4)
+           VALUE H'A0'.
 009100******************************************************************
 009200 01  FILE-DATA.
 009300******************************************************************
@@ -212,8 +225,25 @@
 021200*
 021300******************************************************************
 021400 KERNEL.
+      * Configure as you wish
 021500     MOVE 'Y' TO WS-DEBUG.
 021600     MOVE H'3F8' TO UART-PORT.
+           MOVE ATAPI-FIRST-BUS TO ATAPI-BUS.
+           MOVE ATAPI-DRIVE-MASTER TO ATAPI-DRIVE.
+      * Perform sanity checks
+           IF WS-DEBUG = 'Y'
+               MOVE H'7F' TO WS-AND1
+               MOVE H'0F' TO WS-ANDBY
+               PERFORM BITWISE-AND
+               IF WS-ANDRES NOT = H'0F'
+                   DISPLAY "Bitwise and 7F & 0F gave incorrect result "
+                   WS-ANDRES END-DISPLAY
+                   PERFORM DEBUG-HANG
+               END-IF
+           END-IF.
+      * Initialize main drivers
+           PERFORM ATAPI-READ.
+           PERFORM DEBUG-HANG.
 021700     PERFORM UART-INIT.
 021800     PERFORM PS2-INIT.
 021900     PERFORM PS2-INIT-KEYBOARD.
@@ -345,9 +375,9 @@
 034600*
 034700******************************************************************
 034800 FILE-CREATE.
-034900     MULTIPLY FILE-RECLEN BY FILE-NUMRECS GIVING WS-TMP
+034900     MULTIPLY FILE-RECLEN BY FILE-NUMRECS GIVING WS-MULRES
 035000     END-MULTIPLY.
-035100     ALLOCATE WS-TMP CHARACTERS INITIALIZED RETURNING WS-PTR.
+035100     ALLOCATE WS-MULRES CHARACTERS INITIALIZED RETURNING WS-PTR.
 035200******************************************************************
 035300*
 035400* ATAPI Driver
@@ -358,7 +388,63 @@
 035900* Reads a part of the disk onto ATAPI-BUFFER, set ATAPI-SIZE
 036000* previously ;)
 036100 ATAPI-READ.
+           PERFORM ATAPI-DRIVESEL.
+      * Clear the command buffer first
+           MOVE ZEROES TO ATAPI-CMD.
+           MOVE 12 TO ATAPI-CMD-SIZE.
+           MOVE H'A8' TO ATAPI-CMD(1:1).
+           MOVE 1 TO ATAPI-CMD(10:1).
+      * Low byte
+           MOVE ATAPI-LBA TO ATAPI-CMD(6:1).
+      * Second byte, shift by 8 bits
+           MOVE ATAPI-LBA TO WS-TMP.
+           DIVIDE WS-TMP BY H'100' GIVING WS-TMP END-DIVIDE.
+           MOVE WS-TMP TO ATAPI-CMD(5:1).
+      * Third byte, shift by 16 bits
+           MOVE ATAPI-LBA TO WS-TMP.
+           DIVIDE WS-TMP BY H'10000' GIVING WS-TMP END-DIVIDE.
+           MOVE WS-TMP TO ATAPI-CMD(4:1).
+      * Last byte, shift by 24 bits
+           MOVE ATAPI-LBA TO WS-TMP.
+           DIVIDE WS-TMP BY H'1000000' GIVING WS-TMP END-DIVIDE.
+           MOVE WS-TMP TO ATAPI-CMD(3:1).
+           PERFORM ATAPI-SEND-COMMAND.
+      * Obtain the size of the read (high byte first)
+           COMPUTE IO-PORT = ATAPI-BUS + 5 END-COMPUTE.
+           PERFORM IO-IN-8.
+           COMPUTE WS-TMP = IO-DATA * H'100' END-COMPUTE.
+           COMPUTE IO-PORT = ATAPI-BUS + 4 END-COMPUTE.
+           PERFORM IO-IN-8.
+           COMPUTE WS-TMP = WS-TMP + IO-DATA END-COMPUTE.
+           DISPLAY "Read size is " WS-TMP END-DISPLAY.
 036200     DISPLAY "TODO: Read" END-DISPLAY.
+       ATAPI-DRIVESEL.
+           IF WS-DEBUG = 'Y'
+               IF ATAPI-DRIVE NOT = ATAPI-DRIVE-MASTER
+                   DISPLAY "Invalid ATA drive " ATAPI-DRIVE END-DISPLAY
+                   PERFORM DEBUG-HANG
+               END-IF
+               IF ATAPI-BUS NOT = ATAPI-FIRST-BUS AND
+               ATAPI-BUS NOT = ATAPI-SECOND-BUS
+                   DISPLAY "Invalid ATA bus " ATAPI-BUS END-DISPLAY
+                   PERFORM DEBUG-HANG
+               END-IF
+           END-IF.
+           COMPUTE IO-PORT = ATAPI-BUS + 7 END-COMPUTE.
+           PERFORM IO-IN-8.
+           IF IO-DATA = H'FF'
+               DISPLAY "Warning: Drive on bus " ATAPI-BUS " not present"
+               END-DISPLAY
+           END-IF.
+           COMPUTE IO-PORT = ATAPI-BUS + 6 END-COMPUTE.
+           MOVE ATAPI-DRIVE TO IO-DATA.
+           PERFORM IO-OUT-8.
+      * 4ns wait
+           COMPUTE IO-PORT = ATAPI-BUS + H'206' END-COMPUTE.
+           PERFORM IO-IN-8.
+           PERFORM IO-IN-8.
+           PERFORM IO-IN-8.
+           PERFORM IO-IN-8.
 036300 ATAPI-SEND-COMMAND.
 036400* Perform operation via PIO
 036500     COMPUTE IO-PORT = ATAPI-BUS + 1 END-COMPUTE.
@@ -400,19 +486,22 @@
 040100         SUBTRACT 1 FROM WS-LOOP END-SUBTRACT
 040200     END-PERFORM.
 040300 ATAPI-WAIT-1.
+           MOVE 5 TO WS-TIMEOUT.
 040400     MOVE 0 TO ATAPI-STATUS.
 040500     COMPUTE IO-PORT = ATAPI-BUS + 7 END-COMPUTE.
-040600     PERFORM UNTIL ATAPI-STATUS NOT = 0
+040600     PERFORM UNTIL ATAPI-STATUS NOT = 0 OR WS-TIMEOUT = 0
 040700         PERFORM IO-IN-8
 040800         MOVE IO-DATA TO WS-AND1
 040900         MOVE H'80' TO WS-ANDBY
 041000         PERFORM BITWISE-AND
 041100         MOVE WS-ANDRES TO ATAPI-STATUS
+               SUBTRACT 1 FROM WS-TIMEOUT END-SUBTRACT
 041200     END-PERFORM.
 041300 ATAPI-WAIT-2.
+           MOVE 5 TO WS-TIMEOUT.
 041400     MOVE 0 TO ATAPI-STATUS.
 041500     COMPUTE IO-PORT = ATAPI-BUS + 7 END-COMPUTE.
-041600     PERFORM UNTIL ATAPI-STATUS = 0
+041600     PERFORM UNTIL ATAPI-STATUS = 0 OR WS-TIMEOUT = 0
 041700         PERFORM IO-IN-8
 041800* Bit 3 has to be clear
 041900         MOVE IO-DATA TO WS-AND1
@@ -424,6 +513,7 @@
 042500         MOVE H'01' TO WS-ANDBY
 042600         PERFORM BITWISE-AND
 042700         ADD WS-ANDRES TO ATAPI-STATUS END-ADD
+               SUBTRACT 1 FROM WS-TIMEOUT END-SUBTRACT
 042800     END-PERFORM.
 042900******************************************************************
 043000*
@@ -786,7 +876,8 @@
 078700         PERFORM IO-IN-8
 078800         MOVE IO-DATA TO SB16-DSP-VER
 078900         MOVE H'10000' TO WS-MULBY
-079000         MULTIPLY SB16-DSP-VER BY WS-MULBY END-MULTIPLY
+079000         MULTIPLY SB16-DSP-VER BY WS-MULBY GIVING SB16-DSP-VER
+               END-MULTIPLY
 079100         PERFORM IO-IN-8
 079200         ADD IO-DATA TO SB16-DSP-VER END-ADD
 079300* TODO: Set IRQ to send data to
@@ -861,49 +952,51 @@
 086200     BY VALUE UNSIGNED SIZE IS 4 IO-DATA
 086300     BY CONTENT 'C'
 086400     END-CALL.
-086500     PERFORM DEBUG-PRINT.
+086500     PERFORM DEBUG-PRINT-OUT.
 086600 IO-OUT-16.
 086700     CALL STATIC "IO_OUT"
 086800     USING BY VALUE UNSIGNED SIZE IS 2 IO-PORT
 086900     BY VALUE UNSIGNED SIZE IS 4 IO-DATA
 087000     BY CONTENT 'H'
 087100     END-CALL.
-087200     PERFORM DEBUG-PRINT.
+087200     PERFORM DEBUG-PRINT-OUT.
 087300 IO-OUT-32.
 087400     CALL STATIC "IO_OUT"
 087500     USING BY VALUE UNSIGNED SIZE IS 2 IO-PORT
 087600     BY VALUE UNSIGNED SIZE IS 4 IO-DATA
 087700     BY CONTENT 'S'
 087800     END-CALL.
-087900     PERFORM DEBUG-PRINT.
+087900     PERFORM DEBUG-PRINT-OUT.
 088000 IO-IN-8.
 088100     CALL STATIC "IO_IN"
 088200     USING BY VALUE UNSIGNED SIZE IS 2 IO-PORT
 088300     BY CONTENT 'C'
-088400     RETURNING IO-DATA END-CALL.
-088500     PERFORM DEBUG-PRINT.
+088400     BY REFERENCE IO-DATA
+           END-CALL.
+088500     PERFORM DEBUG-PRINT-IN.
 088600 IO-IN-16.
 088700     CALL STATIC "IO_IN"
 088800     USING BY VALUE UNSIGNED SIZE IS 2 IO-PORT
 088900     BY CONTENT 'S'
-089000     RETURNING IO-DATA END-CALL.
-089100     PERFORM DEBUG-PRINT.
+089000     BY REFERENCE IO-DATA
+           END-CALL.
+089100     PERFORM DEBUG-PRINT-IN.
 089200 IO-IN-32.
 089300     CALL STATIC "IO_IN"
 089400     USING BY VALUE UNSIGNED SIZE IS 2 IO-PORT
 089500     BY CONTENT 'H'
-089600     RETURNING IO-DATA END-CALL.
-089700     PERFORM DEBUG-PRINT.
-089800 DEBUG-PRINT.
+           BY REFERENCE IO-DATA
+           END-CALL.
+089700     PERFORM DEBUG-PRINT-IN.
+089800 DEBUG-PRINT-OUT.
 089900     IF WS-DEBUG = 'Y'
-090000* Port number
-090100         MOVE IO-PORT TO WS-INSTR
-090200         PERFORM HEX-TO-PRINTABLE
-090300         DISPLAY "PORT: " WS-OUTSTR END-DISPLAY
-090400* Port data
-090500         MOVE IO-DATA TO WS-INSTR
-090600         PERFORM HEX-TO-PRINTABLE
-090700         DISPLAY "DATA: " WS-OUTSTR END-DISPLAY
+090300         DISPLAY "OUT: " IO-PORT " <- " IO-DATA "; " NO ADVANCING
+               END-DISPLAY
+090800     END-IF.
+089800 DEBUG-PRINT-IN.
+089900     IF WS-DEBUG = 'Y'
+090300         DISPLAY "IN: " IO-PORT " -> " IO-DATA "; " NO ADVANCING
+               END-DISPLAY
 090800     END-IF.
 090900******************************************************************
 091000*
@@ -916,24 +1009,32 @@
 091700* to give WS-ANDRES
 091800 BITWISE-AND.
 091900     MOVE 0 TO WS-ANDRES.
-092000     MOVE 1 TO WS-TMP.
-092100     PERFORM UNTIL WS-AND1 <= 0 AND WS-ANDBY <= 0
-092200         DIVIDE WS-AND1 BY 2 GIVING WS-DIVRES
-092300         REMAINDER WS-RESIDUE END-DIVIDE
-092400         IF WS-RESIDUE = 1
-092500             DIVIDE WS-ANDBY BY 2 GIVING WS-DIVRES
-092600             REMAINDER WS-RESIDUE END-DIVIDE
-092700             IF WS-RESIDUE = 1
-092800                 ADD WS-TMP TO WS-ANDRES END-ADD
-092900             END-IF
-093000         END-IF
-093100         DIVIDE WS-AND1 BY 2 GIVING WS-DIVRES END-DIVIDE
-093200         MOVE WS-DIVRES TO WS-AND1
-093300         DIVIDE WS-ANDBY BY 2 GIVING WS-DIVRES END-DIVIDE
-093400         MOVE WS-DIVRES TO WS-ANDBY
-093500         MOVE 2 TO WS-MULBY
-093600         MULTIPLY WS-TMP BY WS-MULBY END-MULTIPLY
+092000     MOVE 1 TO I.
+092100     PERFORM UNTIL WS-AND1 = 0 OR WS-ANDBY = 0
+               DIVIDE WS-AND1 BY 2 GIVING WS-AND1 REMAINDER WS-TMP
+               END-DIVIDE
+               DIVIDE WS-ANDBY BY 2 GIVING WS-ANDBY REMAINDER WS-TMP2
+               END-DIVIDE
+               IF WS-TMP = 1 AND WS-TMP2 = 1
+                   ADD I TO WS-ANDRES END-ADD
+               END-IF
+               MOVE 2 TO WS-MULBY
+               MULTIPLY I BY WS-MULBY GIVING I END-MULTIPLY
 093700     END-PERFORM.
+       BITWISE-OR.
+           MOVE 0 TO WS-ORRES.
+           MOVE 1 TO I.
+           PERFORM UNTIL WS-OR1 = 0 OR WS-ORBY = 0
+               DIVIDE WS-OR1 BY 2 GIVING WS-OR1 REMAINDER WS-TMP
+               END-DIVIDE
+               DIVIDE WS-ORBY BY 2 GIVING WS-ORBY REMAINDER WS-TMP2
+               END-DIVIDE
+               IF WS-TMP = 1 OR WS-TMP2 = 1
+                   ADD I TO WS-ORRES END-ADD
+               END-IF
+               MOVE 2 TO WS-MULBY
+               MULTIPLY I BY WS-MULBY GIVING I END-MULTIPLY
+           END-PERFORM.
 093800******************************************************************
 093900*
 094000* Miscellaneous utilities
@@ -947,6 +1048,7 @@
 094800     ADD 1 TO WS-RESIDUE END-ADD.
 094900     MOVE WS-HEXCHMAP(WS-RESIDUE:1) TO WS-CHAR.
 095000 HEX-TO-PRINTABLE.
+           MOVE SPACES TO WS-OUTSTR.
 095100     PERFORM VARYING I FROM 1 BY 1 UNTIL I > LENGTH OF WS-INSTR
 095200* Reminder: Every byte is equal to 2 characters as each character
 095300* is representative of a nibble, and a byte is two nibbles
@@ -964,6 +1066,14 @@
 096500         ADD 1 TO J END-ADD
 096600         MOVE WS-CHAR TO WS-OUTSTR(J:1)
 096700     END-PERFORM.
+      * Hang forever (for debug purpouses)
+       DEBUG-HANG.
+           IF WS-DEBUG = 'A'
+               MOVE SPACE TO WS-REPLY
+               PERFORM UNTIL WS-REPLY = 'X'
+                   MOVE WS-REPLY TO WS-REPLY
+               END-PERFORM
+           END-IF.
 096800* A dummy exit to catch paragraphs going out of bounds
 096900 DUMMY-EXIT.
 097000     DISPLAY "Using a dummy exit ^^" END-DISPLAY.
