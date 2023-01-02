@@ -26,7 +26,7 @@ enum vga_color
 typedef int chtype;
 #define WITH_CURSES "freestanding"
 int initscr(void);
-void endwin(void);
+int endwin(void);
 const char *longname(void);
 int flash(void);
 int beep(void);
@@ -34,7 +34,7 @@ int move(int x, int y);
 void pair_content(int num, short *fg, short *bg);
 void init_pair(short num, short fg, short bg);
 int has_colors(void);
-void start_color(void);
+int start_color(void);
 #define A_NORMAL 0x00
 #define A_REVERSE 0x100
 #define A_BOLD 0x100
@@ -50,9 +50,9 @@ extern int _col;
 #define getyx(s, y, x) (y = _row, x = _col)
 void clrtoeol(void);
 void clear(void);
-void cbreak(void);
-void nonl(void);
-void noecho(void);
+int cbreak(void);
+int nonl(void);
+int noecho(void);
 
 #define KEY_SCROLLOCK (char)(0xEE)
 #define KEY_NUMLOCK (char)(0xEF)
@@ -101,15 +101,15 @@ void noecho(void);
 
 void addnstr(const char *s, size_t size);
 void addch(int ch);
-void refresh(void);
+int refresh(void);
 int getch(void);
 int flushinp(void);
 int scrollok(void *w, int a);
-void def_prog_mode(void);
-void reset_prog_mode(void);
+int def_prog_mode(void);
+int reset_prog_mode(void);
 void delwin(void *p);
 int curs_set(int s);
-void timeout(int ms);
+int timeout(int ms);
 void ungetch(int ch);
 void scrl(int s);
 void bkgdset(chtype col);

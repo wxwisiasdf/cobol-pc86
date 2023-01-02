@@ -27,11 +27,6 @@ char *strchr(const char *s, char c)
     return (char *)s;
 }
 
-int rand(void)
-{
-    return 0;
-}
-
 char *strrchr(const char *s, char c)
 {
     char *l = NULL;
@@ -137,18 +132,6 @@ void clrtoeol(void)
         _buffer[_row * COLS + x] = vga_entry(' ', _color);
 }
 
-void cbreak(void)
-{
-}
-
-void nonl(void)
-{
-}
-
-void noecho(void)
-{
-}
-
 static uint8_t inb(uint16_t port)
 {
     uint8_t ret = 0;
@@ -196,24 +179,9 @@ int initscr(void)
     return 1;
 }
 
-void endwin(void)
-{
-    return;
-}
-
 const char *longname(void)
 {
     return "a long name";
-}
-
-int flash(void)
-{
-    return 0;
-}
-
-int beep(void)
-{
-    return 0;
 }
 
 int move(int y, int x)
@@ -236,15 +204,6 @@ void init_pair(short num, short fg, short bg)
 {
     /* ??? */
     return;
-}
-
-int has_colors(void)
-{
-    return 1;
-}
-
-void start_color(void)
-{
 }
 
 void addnstr(const char *s, size_t size)
@@ -318,10 +277,6 @@ void addch(int c)
         printf("stub! %s\n", __PRETTY_FUNCTION__); \
         abort();                                   \
     }
-
-void refresh(void)
-{
-}
 
 uint8_t _geT_ps2_input(void)
 {
@@ -520,44 +475,9 @@ int attrset(int attr)
     return 0;
 }
 
-int scrollok(void *w, int a)
-{
-    return 0;
-}
-
-void def_prog_mode(void)
-{
-    return;
-}
-
-void reset_prog_mode(void)
-{
-    return;
-}
-
-void delwin(void *p)
-{
-    return;
-}
-
-int curs_set(int s)
-{
-    return 0;
-}
-
-void timeout(int ms)
-{
-    return;
-}
-
 void ungetch(int ch)
 {
     _last_saved_ch = ch;
-    return;
-}
-
-void attron(chtype attr)
-{
     return;
 }
 
@@ -572,22 +492,12 @@ void scrl(int s)
     return;
 }
 
-void bkgdset(chtype col)
-{
-    return;
-}
-
 void clrtobot(void)
 {
     clrtoeol();
     for (size_t y = _row + 1; y < LINES; y++)
         for (size_t x = 0; x < COLS; x++)
             _buffer[y * COLS + x] = vga_entry(' ', _color);
-}
-
-void keypad(void *p, int a)
-{
-    return;
 }
 
 #include "alloc.h"
@@ -679,47 +589,14 @@ lt_dlhandle lt_dlopen(const char *x)
     return NULL;
 }
 
-void lt_dlclose()
-{
-    STUB_FUNC;
-    return;
-}
-
-void lt_dlinit(void)
-{
-    printf("lt_dlinit\n");
-    return;
-}
-
-void lt_dlexit()
-{
-    return;
-}
-
 float fabs(float a)
 {
     return a < 0.f ? -a : a;
 }
 
-const char *gettext(const char *s)
-{
-    return s;
-}
-
-const char *gettext_noop(const char *s)
-{
-    return s;
-}
-
 FILE *stderr = NULL;
 FILE *stdout = NULL;
 FILE *stdin = NULL;
-
-int access(const char *name, int mode)
-{
-    STUB_FUNC;
-    return -1;
-}
 
 long int ftell(FILE *fp)
 {
@@ -746,12 +623,6 @@ int fstat(int fd, struct stat *st)
 }
 
 int errno = 0;
-int mkdir(const char *name, int mode)
-{
-    STUB_FUNC;
-    return -1;
-}
-
 int strcasecmp(const char *s1, const char *s2)
 {
     while (*s1 && *s2)
@@ -769,71 +640,6 @@ int strncasecmp(const char *s1, const char *s2, size_t n)
     while (n--)
     {
         if (tolower(*s1) != tolower(*s2))
-            return -1;
-        s1++;
-        s2++;
-    }
-    return 0;
-}
-
-int islower(int x)
-{
-    return ((x) == 'a' || (x) == 'b' || (x) == 'c' || (x) == 'd' || (x) == 'e' || (x) == 'f' || (x) == 'g' || (x) == 'h' || (x) == 'i' || (x) == 'j' || (x) == 'k' || (x) == 'l' || (x) == 'm' || (x) == 'n' || (x) == 'o' || (x) == 'p' || (x) == 'q' || (x) == 'r' || (x) == 's' || (x) == 't' || (x) == 'u' || (x) == 'v' || (x) == 'w' || (x) == 'x' || (x) == 'y' || (x) == 'z') ? 1 : 0;
-}
-
-int isupper(int x)
-{
-    return ((x) == 'A' || (x) == 'B' || (x) == 'C' || (x) == 'D' || (x) == 'E' || (x) == 'F' || (x) == 'G' || (x) == 'H' || (x) == 'I' || (x) == 'J' || (x) == 'K' || (x) == 'L' || (x) == 'M' || (x) == 'N' || (x) == 'O' || (x) == 'P' || (x) == 'Q' || (x) == 'R' || (x) == 'S' || (x) == 'T' || (x) == 'U' || (x) == 'V' || (x) == 'W' || (x) == 'X' || (x) == 'Y' || (x) == 'Z') ? 1 : 0;
-}
-
-int isdigit(int x)
-{
-    return ((x) == '0' || (x) == '1' || (x) == '2' || (x) == '3' || (x) == '4' || (x) == '5' || (x) == '6' || (x) == '7' || (x) == '8' || (x) == '9');
-}
-
-int isalpha(int x)
-{
-    return islower(x) || isupper(x) ? 1 : 0;
-}
-
-int isalnum(int x)
-{
-    return isalpha(x) || isdigit(x) ? 1 : 0;
-}
-
-int isspace(int x)
-{
-    return x == ' ' || x == '\t' || x == '\v' || x == '\r' || x == '\n' || x == '\f' ? 1 : 0;
-}
-
-int ispunct(int x)
-{
-    return x == '.' || x == ',' || x == ';' || x == ':' ? 1 : 0;
-}
-
-int isxdigit(int x)
-{
-    x = tolower(x);
-    if (isdigit(x) || x == 'A' || x == 'B' || x == 'C' || x == 'D' || x == 'E' || x == 'F')
-        return 1;
-    return 0;
-}
-
-int isprint(int x)
-{
-    return isalnum(x) || ispunct(x) ? 1 : 0;
-}
-
-void srand(unsigned int a)
-{
-    return;
-}
-
-int strncmp(const char *s1, const char *s2, size_t n)
-{
-    while (n--)
-    {
-        if (*s1 != *s2)
             return -1;
         s1++;
         s2++;
@@ -864,11 +670,6 @@ int fileno(FILE *f)
     return -1;
 }
 
-int abs(int x)
-{
-    return x < 0 ? -x : x;
-}
-
 FILE *fopen(const char *name, const char *mode)
 {
     if (!strcmp("./runtime.cfg", name))
@@ -897,24 +698,6 @@ int puts(const char *s)
     while (*s)
         putchar(*s--);
     return 0;
-}
-
-int chdir(const char *name)
-{
-    STUB_FUNC;
-    return -1;
-}
-
-int rename(const char *old, const char *new)
-{
-    STUB_FUNC;
-    return -1;
-}
-
-int close(int fd)
-{
-    STUB_FUNC;
-    return -1;
 }
 
 void exit(int status)
@@ -1029,18 +812,6 @@ time_t mktime(struct tm *tp)
 {
     STUB_FUNC;
     return (time_t)-1;
-}
-
-int system(const char *cmd)
-{
-    STUB_FUNC;
-    return -1;
-}
-
-int sleep(int ms)
-{
-    STUB_FUNC;
-    return -1;
 }
 
 char *fgets(char *s, int n, FILE *fp)
@@ -1172,28 +943,10 @@ char *strncat(char *restrict s1, const char *restrict s2, size_t n)
     return s1;
 }
 
-int putenv(char *e)
-{
-    STUB_FUNC;
-    return -1;
-}
-
-int fsync(int fd)
-{
-    STUB_FUNC;
-    return -1;
-}
-
 char *getcwd(const char *c, size_t n)
 {
     STUB_FUNC;
     return "/";
-}
-
-int unlink(const char *name)
-{
-    STUB_FUNC;
-    return -1;
 }
 
 int open(const char *name, int mode, ...)
@@ -1203,18 +956,6 @@ int open(const char *name, int mode, ...)
 }
 
 int write(int fd, const void *p, size_t n)
-{
-    STUB_FUNC;
-    return -1;
-}
-
-int getchar(void)
-{
-    STUB_FUNC;
-    return EOF;
-}
-
-int rmdir(const char *name)
 {
     STUB_FUNC;
     return -1;
@@ -1277,20 +1018,17 @@ void *memmove(void *dest, const void *src, size_t n)
 
 int fputs(const char *restrict s, FILE *restrict fp)
 {
-    puts(s);
-    return 0;
+    return puts(s);
 }
 
 int fputc(int c, FILE *fp)
 {
-    putchar(c);
-    return 0;
+    return putchar(c);
 }
 
 int putc(int c, FILE *fp)
 {
-    putchar(c);
-    return 0;
+    return putchar(c);
 }
 
 size_t fwrite(const void *restrict p, size_t n, size_t size, FILE *fp)
@@ -1323,11 +1061,6 @@ int vfprintf(FILE *fp, const char *fmt, va_list ap)
 int fflush(FILE *fp)
 {
     return 0;
-}
-
-char *getenv(const char *env)
-{
-    return "";
 }
 
 void *malloc(size_t size)
@@ -1378,12 +1111,6 @@ long strtol(char *s, char **endptr, int base)
 }
 
 size_t strftime(char *p, size_t size, const char *fmt, const struct tm *tp)
-{
-    STUB_FUNC;
-    return 0;
-}
-
-int ftruncate(int fd, int offset)
 {
     STUB_FUNC;
     return 0;
