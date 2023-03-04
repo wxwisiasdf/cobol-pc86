@@ -26,8 +26,8 @@
            02 VALUE "B-b-but COBOL is outdated!" LINE 5 COL 10.
            02 VALUE "Lies, COBOL just had a revision ongoing this year!"
            LINE 7 COL 10.
-           02 VALUE "* The COBOL 2014 standard" LINE 8 COL 10.
-           02 VALUE "* GNU/COBOL is being actively developed in 2022"
+           02 VALUE "* The COBOL 2023 standard" LINE 8 COL 10.
+           02 VALUE "* GnuCCOBOL is being actively developed in 2023"
            LINE 9 COL 10.
            02 VALUE "  and said compiler is one of the best I've used"
            LINE 10 COL 10.
